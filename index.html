@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberGuard AI | Phishing & Threat Intelligence Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #06090e;
+      --bg-surface: #0c121d;
+      --bg-card: #121a29;
+      --bg-card-hover: #162235;
+      --border-subtle: #1c2a40;
+      --border-bright: #293d5c;
+      --cyan: #00f0ff;
+      --cyan-glow: rgba(0, 240, 255, 0.28);
+      --red: #ff2a5f;
+      --red-glow: rgba(255, 42, 95, 0.28);
+      --amber: #ffb020;
+      --amber-glow: rgba(255, 176, 32, 0.28);
+      --green: #00f59b;
+      --green-glow: rgba(0, 245, 155, 0.28);
+      --text-primary: #f0f6fc;
+      --text-secondary: #8b9bb4;
+      --text-muted: #53647c;
+      --font-display: 'Chakra Petch', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 240, 255, 0.12), transparent 70%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Top Nav / Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(0, 119, 255, 0.25));
+      border: 1px solid var(--cyan);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px var(--cyan-glow);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #ffffff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .telemetry-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 245, 155, 0.08);
+      border: 1px solid rgba(0, 245, 155, 0.3);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--green);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .btn-action {
+      background: var(--bg-card);
+      border: 1px solid var(--border-bright);
+      color: var(--text-primary);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: var(--font-body);
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-action:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px var(--cyan-glow);
+      color: var(--cyan);
+    }
+
+    /* Grid layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0.35;
+    }
+
+    /* Mode Selection Tabs */
+    .tabs-header {
+      display: flex;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--border-bright);
+    }
+
+    .tab-btn.active {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan-glow);
+    }
+
+    /* Textarea */
+    .input-wrapper { position: relative; margin-bottom: 16px; }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      color: var(--text-primary);
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    textarea:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px var(--cyan-glow);
+    }
+
+    /* Samples Tray */
+    .sample-tray {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tray-label {
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sample-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .sample-chip:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      transform: translateY(-1px);
+    }
+
+    /* Primary Action Button */
+    .btn-execute {
+      width: 100%;
+      background: linear-gradient(135deg, #00f0ff, #0077ff);
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 14px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 24px rgba(0, 240, 255, 0.35);
+      transition: all 0.25s;
+    }
+
+    .btn-execute:hover {
+      box-shadow: 0 6px 32px rgba(0, 240, 255, 0.55);
+      transform: translateY(-2px);
+    }
+
+    /* Sync Feed Banner */
+    .sync-feed {
+      margin-top: 14px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      min-height: 22px;
+    }
+
+    /* Payload X-Ray & Deep Analysis */
+    .xray-panel {
+      margin-top: 24px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    .panel-header-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .xray-canvas {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.86rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 100px;
+      color: var(--text-secondary);
+    }
+
+    .hl-critical {
+      background: rgba(255, 42, 95, 0.28);
+      color: #ff90ac;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 42, 95, 0.5);
+    }
+
+    .hl-warning {
+      background: rgba(255, 176, 32, 0.28);
+      color: #ffd07a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 176, 32, 0.5);
+    }
+
+    /* Sidebar / Threat Gauge */
+    .gauge-card {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .gauge-wrapper {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 10px 0 20px 0;
+    }
+
+    .gauge-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: var(--bg-card);
+      stroke-width: 12;
+    }
+
+    .gauge-progress {
+      fill: none;
+      stroke: var(--green);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-dasharray: 565.48;
+      stroke-dashoffset: 565.48;
+      transition: stroke-dashoffset 1s ease-out, stroke 0.5s ease;
+      filter: drop-shadow(0 0 10px var(--green-glow));
+    }
+
+    .gauge-center-content {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-percentage {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1;
+    }
+
+    .gauge-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 6px;
+    }
+
+    /* Threat Status Badges */
+    .threat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .badge-safe {
+      background: var(--green-glow);
+      color: var(--green);
+      border: 1px solid var(--green);
+    }
+
+    .badge-suspicious {
+      background: var(--amber-glow);
+      color: var(--amber);
+      border: 1px solid var(--amber);
+    }
+
+    .badge-critical {
+      background: var(--red-glow);
+      color: var(--red);
+      border: 1px solid var(--red);
+      animation: alertBlink 1.5s infinite;
+    }
+
+    @keyframes alertBlink {
+      0%, 100% { box-shadow: 0 0 15px var(--red-glow); }
+      50% { box-shadow: 0 0 30px var(--red); }
+    }
+
+    /* Breakdown List */
+    .indicators-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .indicator-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.4;
+      transition: all 0.2s;
+    }
+
+    .indicator-card.flagged {
+      border-left-color: var(--red);
+      background: rgba(255, 42, 95, 0.05);
+    }
+
+    .indicator-card.flagged-warning {
+      border-left-color: var(--amber);
+      background: rgba(255, 176, 32, 0.05);
+    }
+
+    /* Export Row */
+    .export-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      margin-top: 24px;
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(6, 9, 14, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.active { display: flex; }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-bright);
+      border-radius: 16px;
+      width: 520px;
+      max-width: 90%;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    .modal-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--cyan), #0077ff);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    .form-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px var(--cyan-glow);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" fill="none" stroke="#00f0ff" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">CyberGuard Threat Suite</h1>
+          <div class="brand-subtitle">AI HEURISTIC THREAT DETECTION // SOC ANALYST ENGINE</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="telemetry-pill">
+          <span class="pulse-dot"></span>
+          <span>SYSTEM ACTIVE</span>
+        </div>
+        <button class="btn-action" onclick="openConfigModal()">
+          ⚙️ Google Sheets Sync
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="dashboard-grid">
+      <!-- Left Column -->
+      <section>
+        <div class="panel">
+          <div class="tabs-header">
+            <button class="tab-btn active" onclick="switchVector('email')">[EMAIL VECTORS]</button>
+            <button class="tab-btn" onclick="switchVector('url')">[DOMAIN & URI]</button>
+            <button class="tab-btn" onclick="switchVector('sms')">[SMISHING / SMS]</button>
+          </div>
+
+          <div class="input-wrapper">
+            <textarea id="payloadInput" placeholder="Paste target email body, raw RFC-822 headers, URLs, or mobile messages for deep heuristic inspection..."></textarea>
+          </div>
+
+          <div class="sample-tray">
+            <span class="tray-label">Quick Scenarios:</span>
+            <button class="sample-chip" onclick="loadPreset('bank')">🚨 Bank Urgency Phish</button>
+            <button class="sample-chip" onclick="loadPreset('paypal')">🔗 Spoofed PayPal Link</button>
+            <button class="sample-chip" onclick="loadPreset('usps')">📦 USPS Smishing Lure</button>
+            <button class="sample-chip" onclick="loadPreset('clean')">🛡️ Clean Order Receipt</button>
+          </div>
+
+          <button class="btn-execute" onclick="executeInspection()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            Execute Deep Threat Scan
+          </button>
+
+          <div id="syncFeedback" class="sync-feed">Ready to inspect payload.</div>
+        </div>
+
+        <!-- Payload X-Ray -->
+        <div class="xray-panel">
+          <div class="panel-header-title">
+            <span>Payload X-Ray & Trigger Mapping</span>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">HEURISTIC TOKENIZER</span>
+          </div>
+          <div id="xrayCanvas" class="xray-canvas">Submit or select a payload above to map active threat vectors.</div>
+        </div>
+      </section>
+
+      <!-- Right Column (Gauge & Side Metrics) -->
+      <aside class="panel gauge-card">
+        <div class="panel-header-title" style="width: 100%;">
+          <span>Threat Gauge</span>
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">CONFIDENCE RATIO</span>
+        </div>
+
+        <div class="gauge-wrapper">
+          <svg class="gauge-svg" viewBox="0 0 200 200">
+            <circle class="gauge-bg" cx="100" cy="100" r="90" />
+            <circle class="gauge-progress" id="gaugeRing" cx="100" cy="100" r="90" />
+          </svg>
+          <div class="gauge-center-content">
+            <div class="gauge-percentage" id="scoreValue">0%</div>
+            <div class="gauge-label">Threat Level</div>
+          </div>
+        </div>
+
+        <div id="threatBadge" class="threat-badge badge-safe">
+          ● SAFE / LOW RISK
+        </div>
+
+        <div class="indicators-container" id="indicatorList">
+          <div class="indicator-card">
+            <span>🛡️</span>
+            <span>Awaiting inspection input...</span>
+          </div>
+        </div>
+
+        <!-- Operations Actions -->
+        <div class="export-row">
+          <button class="btn-action" style="justify-content: center;" onclick="exportAuditJSON()">
+            📥 Export JSON
+          </button>
+          <button class="btn-action" style="justify-content: center;" onclick="manualSheetSync()">
+            📊 Force Sync
+          </button>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Protected Admin Settings Modal -->
+  <div class="modal-backdrop" id="configModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">Admin Configuration</h2>
+        <button class="close-modal" onclick="lockAdminSession()">✕</button>
+      </div>
+
+      <!-- Locked View -->
+      <div id="adminLockScreen">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+          🔒 This configuration panel is restricted to authorized administrators. Enter the admin passkey to inspect or modify the target sync endpoint.
+        </p>
+        <div class="form-group">
+          <label class="form-label">Master Admin PIN / Password</label>
+          <input type="password" id="adminPasswordInput" class="form-control" placeholder="Enter password to unlock">
+        </div>
+        <button class="btn-execute" onclick="verifyAdminAccess()">
+          Unlock Admin Settings
+        </button>
+        <div id="authError" style="color: var(--red); font-size: 0.78rem; margin-top: 12px; font-family: var(--font-mono); display: none;">
+          ❌ Invalid Admin Passkey. Access Denied.
+        </div>
+      </div>
+
+      <!-- Unlocked View -->
+      <div id="adminConfigScreen" style="display: none;">
+        <div class="form-group">
+          <label class="form-label">Google Sheets Apps Script Webhook URL</label>
+          <input type="text" id="webhookInput" class="form-control" placeholder="https://script.google.com/macros/s/.../exec">
+          <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 6px; display: block;">
+            The browser will write incoming threat scans here automatically. Link stored locally only.
+          </small>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button class="btn-execute" style="flex: 1;" onclick="saveConfiguration()">
+            Save Configuration
+          </button>
+          <button class="btn-action" style="flex: 1; justify-content: center;" onclick="lockAdminSession()">
+            Lock Session
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let activeVector = 'email';
+    let currentIncident = null;
+    let webhookUrl = localStorage.getItem('gs_webhook') || '';
+
+    // Passkey authentication variables
+    const ADMIN_PASSKEY = "CyberGuard#2026"; 
+    let isAdminAuthenticated = false;
+
+    const PRESETS = {
+      bank: "URGENT: Your Wells Fargo account has been locked due to unauthorized access. Click immediately: http://192.168.1.105/verify-login?id=8273 to confirm your password and SSN within 24 hours to prevent permanent closure.",
+      paypal: "https://www.paypal.account-verification-support.xyz/login?token=expired",
+      usps: "[USPS Notice]: Your package US-8921 cannot be delivered due to an incorrect address. Update delivery details now at http://usps-tracking-update.top/claim or parcel will be returned.",
+      clean: "Hi Christian, thank you for your order #49281. Your items have shipped via FedEx (Tracking #9821382). You can track this package through your official account portal."
+    };
+
+    function switchVector(vector) {
+      activeVector = vector;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('payloadInput').placeholder = 
+        vector === 'email' ? 'Paste email body, subject, or raw headers here...' :
+        vector === 'url' ? 'Paste suspicious URL or domain name...' :
+        'Paste SMS / mobile smishing message...';
+    }
+
+    function loadPreset(key) {
+      document.getElementById('payloadInput').value = PRESETS[key];
+      executeInspection();
+    }
+
+    function openConfigModal() {
+      const modal = document.getElementById('configModal');
+      const lockScreen = document.getElementById('adminLockScreen');
+      const configScreen = document.getElementById('adminConfigScreen');
+      const authError = document.getElementById('authError');
+
+      authError.style.display = 'none';
+
+      if (isAdminAuthenticated) {
+        lockScreen.style.display = 'none';
+        configScreen.style.display = 'block';
+        document.getElementById('webhookInput').value = webhookUrl;
+      } else {
+        lockScreen.style.display = 'block';
+        configScreen.style.display = 'none';
+        document.getElementById('adminPasswordInput').value = '';
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeConfigModal() {
+      document.getElementById('configModal').classList.remove('active');
+    }
+
+    function verifyAdminAccess() {
+      const enteredPass = document.getElementById('adminPasswordInput').value;
+      const authError = document.getElementById('authError');
+
+      if (enteredPass === ADMIN_PASSKEY) {
+        isAdminAuthenticated = true;
+        document.getElementById('adminLockScreen').style.display = 'none';
+        document.getElementById('adminConfigScreen').style.display = 'block';
+        document.getElementById('webhookInput').value = webhookUrl;
+      } else {
+        authError.style.display = 'block';
+      }
+    }
+
+    function lockAdminSession() {
+      isAdminAuthenticated = false;
+      closeConfigModal();
+    }
+
+    function saveConfiguration() {
+      webhookUrl = document.getElementById('webhookInput').value.trim();
+      localStorage.setItem('gs_webhook', webhookUrl);
+      closeConfigModal();
+      document.getElementById('syncFeedback').innerText = "✅ Google Sheet Webhook connected and active.";
+    }
+
+    async function streamToGoogleSheet(record) {
+      const feed = document.getElementById('syncFeedback');
+      if (!webhookUrl) {
+        feed.innerText = "ℹ️ Results ready. Ask admin to configure sync ⚙️ to stream rows to Sheets.";
+        return;
+      }
+
+      feed.innerText = "⏳ Stream-logging incident to Google Sheets...";
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record)
+        });
+        feed.innerText = `✅ Logged to Google Sheet automatically (Incident ID: ${record.incident_id})`;
+      } catch (err) {
+        feed.innerText = `⚠️ Google Sheet sync error: ${err.message}`;
+      }
+    }
+
+    function updateGauge(score) {
+      const circle = document.getElementById('gaugeRing');
+      const text = document.getElementById('scoreValue');
+      const badge = document.getElementById('threatBadge');
+      
+      const circumference = 2 * Math.PI * 90; // ~565.48
+      const offset = circumference - (score / 100) * circumference;
+      circle.style.strokeDashoffset = offset;
+      text.innerText = score + '%';
+
+      if (score >= 70) {
+        circle.style.stroke = 'var(--red)';
+        circle.style.filter = 'drop-shadow(0 0 12px var(--red-glow))';
+        text.style.color = 'var(--red)';
+        badge.className = 'threat-badge badge-critical';
+        badge.innerText = 'CRITICAL / MALICIOUS';
+      } else if (score >= 30) {
+        circle.style.stroke = 'var(--amber)';
+        circle.style.filter = 'drop-shadow(0 0 12px var(--amber-glow))';
+        text.style.color = 'var(--amber)';
+        badge.className = 'threat-badge badge-suspicious';
+        badge.innerText = 'SUSPICIOUS THREAT';
+      } else {
+        circle.style.stroke = 'var(--green)';
+        circle.style.filter = 'drop-shadow(0 0 12px var(--green-glow))';
+        text.style.color = 'var(--green)';
+        badge.className = 'threat-badge badge-safe';
+        badge.innerText = 'SAFE / LOW RISK';
+      }
+    }
+
+    function executeInspection() {
+      const payload = document.getElementById('payloadInput').value.trim();
+      if (!payload) return;
+
+      let score = 0;
+      let indicators = [];
+      let highlightRules = [];
+
+      // Heuristic rules
+      const urgencyRegex = /(urgent|immediate|action required|suspended|locked|within 24 hours|unauthorized)/gi;
+      const credRegex = /(password|ssn|social security|verify your account|login|credentials|billing)/gi;
+      const ipRegex = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
+      const tldRegex = /\.(xyz|top|work|ru|cc|country|click)\b/gi;
+      const brandSpoofRegex = /(paypal|microsoft|wells fargo|apple|usps|fedex)[\w-]*\.(xyz|top|cc|online|tk)/gi;
+
+      if (urgencyRegex.test(payload)) {
+        score += 25;
+        indicators.push({ text: "High Urgency / Fear Inducing Language", severity: "critical" });
+        highlightRules.push({ regex: urgencyRegex, class: "hl-critical" });
+      }
+
+      if (credRegex.test(payload)) {
+        score += 30;
+        indicators.push({ text: "Solicitation of Sensitive Credentials / PII", severity: "critical" });
+        highlightRules.push({ regex: credRegex, class: "hl-critical" });
+      }
+
+      if (ipRegex.test(payload)) {
+        score += 35;
+        indicators.push({ text: "Direct Raw IP Address in Link Hostname", severity: "critical" });
+        highlightRules.push({ regex: ipRegex, class: "hl-critical" });
+      }
+
+      if (tldRegex.test(payload) || brandSpoofRegex.test(payload)) {
+        score += 25;
+        indicators.push({ text: "High-Risk TLD or Brand Squatting Pattern", severity: "warning" });
+        highlightRules.push({ regex: tldRegex, class: "hl-warning" });
+      }
+
+      score = Math.min(score, 100);
+      updateGauge(score);
+
+      // Render Indicators
+      const container = document.getElementById('indicatorList');
+      if (indicators.length > 0) {
+        container.innerHTML = indicators.map(ind => `
+          <div class="indicator-card ${ind.severity === 'critical' ? 'flagged' : 'flagged-warning'}">
+            <span>${ind.severity === 'critical' ? '⚠️' : '⚡'}</span>
+            <span>${ind.text}</span>
+          </div>
+        `).join('');
+      } else {
+        container.innerHTML = `
+          <div class="indicator-card" style="border-left-color: var(--green);">
+            <span>🛡️</span>
+            <span>No overt heuristic phishing triggers detected in payload.</span>
+          </div>
+        `;
+      }
+
+      // Render Token Highlight
+      let markedPayload = payload;
+      highlightRules.forEach(rule => {
+        markedPayload = markedPayload.replace(rule.regex, match => `<span class="${rule.class}">${match}</span>`);
+      });
+      document.getElementById('xrayCanvas').innerHTML = markedPayload;
+
+      // Construct Incident Structure
+      const threatLevel = score >= 70 ? 'CRITICAL' : (score >= 30 ? 'SUSPICIOUS' : 'SAFE');
+      currentIncident = {
+        incident_id: "IR-" + Math.floor(100000 + Math.random() * 900000),
+        scan_type: activeVector,
+        threat_score: score,
+        threat_level: threatLevel,
+        indicators: indicators.map(i => i.text),
+        payload: payload
+      };
+
+      // Automate silent sheets log appending in background
+      streamToGoogleSheet(currentIncident);
+    }
+
+    function exportAuditJSON() {
+      if (!currentIncident) {
+        alert("Run an inspection first before exporting an audit report.");
+        return;
+      }
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentIncident, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `CyberGuard_Incident_${currentIncident.incident_id}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function manualSheetSync() {
+      if (!currentIncident) {
+        alert("Execute a threat scan first.");
+        return;
+      }
+      streamToGoogleSheet(currentIncident);
+    }
+  </script>
+</body>
+</html>
